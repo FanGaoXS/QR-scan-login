@@ -18,7 +18,9 @@ type Env struct {
 	LogLevel string
 
 	RestListenAddr string
-	Domain         string
+
+	QRCallbackServiceURL string
+	QRCallbackPath       string
 }
 
 func Get() (Env, error) {
@@ -56,19 +58,27 @@ func Get() (Env, error) {
 		restListenAddr = os.Getenv("REST_LISTEN_ADDR")
 	}
 
-	var domain string
-	if os.Getenv("DOMAIN") == "" {
-		return Env{}, fmt.Errorf("domain is required")
+	var qrCallbackServiceURL string
+	if os.Getenv("QR_CALLBACK_SERVICE_URL") == "" {
+		return Env{}, fmt.Errorf("QR callback service url is required")
 	} else {
-		domain = os.Getenv("DOMAIN")
+		qrCallbackServiceURL = os.Getenv("QR_CALLBACK_SERVICE_URL")
+	}
+
+	var qrCallbackPath string
+	if os.Getenv("QR_CALLBACK_PATH") == "" {
+		return Env{}, fmt.Errorf("QR callback path is required")
+	} else {
+		qrCallbackPath = os.Getenv("QR_CALLBACK_PATH")
 	}
 
 	return Env{
-		AppName:        appName,
-		AppVersion:     appVersion,
-		LogLevel:       logLevel,
-		RestListenAddr: restListenAddr,
-		Domain:         domain,
+		AppName:              appName,
+		AppVersion:           appVersion,
+		LogLevel:             logLevel,
+		RestListenAddr:       restListenAddr,
+		QRCallbackServiceURL: qrCallbackServiceURL,
+		QRCallbackPath:       qrCallbackPath,
 	}, nil
 }
 

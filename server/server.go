@@ -2,13 +2,14 @@ package server
 
 import (
 	"context"
-	"golang.org/x/sync/errgroup"
 
 	"fangaoxs.com/QR-scan-login/environment"
+	"fangaoxs.com/QR-scan-login/internal/domain/qr"
 	"fangaoxs.com/QR-scan-login/internal/infras/logger"
 	"fangaoxs.com/QR-scan-login/server/rest"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/sync/errgroup"
 )
 
 func New(env environment.Env, logger logger.Logger) (*Server, error) {
@@ -35,8 +36,9 @@ func newServer(
 	env environment.Env,
 	logger logger.Logger,
 	httpServer *gin.Engine,
+	qr qr.QR,
 ) (*Server, error) {
-	restServer, err := rest.New(env, logger, httpServer)
+	restServer, err := rest.New(env, logger, httpServer, qr)
 	if err != nil {
 		return nil, err
 	}

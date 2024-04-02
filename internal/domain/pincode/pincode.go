@@ -21,7 +21,7 @@ type pinPolicy struct {
 func New() (PinCode, error) {
 	defaultPolicy := pinPolicy{
 		size:       8,
-		expiration: time.Minute * 3,
+		expiration: time.Second * 20,
 	}
 
 	return &pincode{
@@ -41,7 +41,6 @@ type pincode struct {
 }
 
 func (p *pincode) Generate(ctx context.Context) (string, error) {
-	// TODO: generate random code
 	pin := randString(p.policy.size)
 
 	if err := p.set(pin, p.policy.expiration); err != nil {

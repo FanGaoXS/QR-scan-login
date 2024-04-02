@@ -8,6 +8,8 @@ package server
 
 import (
 	"fangaoxs.com/QR-scan-login/environment"
+	"fangaoxs.com/QR-scan-login/internal/domain/pincode"
+	"fangaoxs.com/QR-scan-login/internal/domain/qr"
 	"fangaoxs.com/QR-scan-login/internal/infras/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -15,7 +17,15 @@ import (
 // Injectors from wire.go:
 
 func initServer(env environment.Env, logger2 logger.Logger, httpServer *gin.Engine) (*Server, error) {
-	server, err := newServer(env, logger2, httpServer)
+	pinCode, err := pincode.New()
+	if err != nil {
+		return nil, err
+	}
+	qrQR, err := qr.New(env, logger2, pinCode)
+	if err != nil {
+		return nil, err
+	}
+	server, err := newServer(env, logger2, httpServer, qrQR)
 	if err != nil {
 		return nil, err
 	}

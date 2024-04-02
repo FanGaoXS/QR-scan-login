@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"fangaoxs.com/QR-scan-login/environment"
+	"fangaoxs.com/QR-scan-login/internal/domain/qr"
 	"fangaoxs.com/QR-scan-login/internal/infras/logger"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +14,17 @@ func New(
 	env environment.Env,
 	logger logger.Logger,
 	router *gin.Engine,
+	qr qr.QR,
 ) (*Server, error) {
-	// register handlers
+	qrCallbackPath := env.QRCallbackPath
+	hdls, err := newHandlers(env, logger, qr)
+	if err != nil {
+		return nil, err
+	}
+
+	router.GET("generateQR", hdls.GenerateQR())
+	router.GET(qrCallbackPath, hdls.VerifyQR())
+
 	s := &http.Server{
 		Addr:    env.RestListenAddr,
 		Handler: router,

@@ -45,6 +45,8 @@ type qr struct {
 	qc                qrcode.Generator
 }
 
+const QrKey = "code"
+
 func (q *qr) GenerateQR(ctx context.Context) ([]byte, error) {
 	code, err := q.pc.Generate(ctx)
 	if err != nil {
@@ -53,7 +55,7 @@ func (q *qr) GenerateQR(ctx context.Context) ([]byte, error) {
 
 	u, _ := url.Parse(q.qrCallbackService)
 	values := u.Query()
-	values.Add("code", code)
+	values.Add(QrKey, code)
 	u.RawQuery = values.Encode()
 
 	return q.qc.GenerateToBytes(ctx, u.String())
@@ -62,10 +64,10 @@ func (q *qr) GenerateQR(ctx context.Context) ([]byte, error) {
 func (q *qr) VerifyQR(ctx context.Context, requestURI string) error {
 	u, _ := url.ParseRequestURI(requestURI)
 	values := u.Query()
-	if !values.Has("code") {
+	if !values.Has(QrKey) {
 		return errors.Newf(errors.InvalidArgument, nil, "code not found")
 	}
 
-	code := values.Get("code")
+	code := values.Get(QrKey)
 	return q.pc.Verify(ctx, code)
 }
